@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMC Health — Defense Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:    #1a1510;
+    --surf:  #222018;
+    --surf2: #2c2419;
+    --bord2: #4a3c2a;
+    --acc:   #c8a876;
+    --acc2:  #a6834e;
+    --acc3:  #7a5f38;
+    --red:   #c0392b;
+    --paper: #f5efe3;
+    --cream: #faf6ee;
+    --ink:   #1a1410;
+    --muted: #7a6f62;
+    --bcard: #d4c9b5;
+    --text:  #f0e8d8;
+    --text2: #c4b49a;
+    --text3: #857363;
+    --text4: #4a3c2a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  /* TOPBAR */
+  .topbar { position: sticky; top: 0; z-index: 40; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: rgba(26,21,16,0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; }
+  .topbar-mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--acc), var(--acc3)); display: grid; place-items: center; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--bg); flex-shrink: 0; }
+  .topbar-name { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--text); }
+  .topbar-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--surf2); border: 1px solid var(--bord2); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); }
+  .topbar-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--acc); box-shadow: 0 0 6px color-mix(in srgb, var(--acc) 70%, transparent); flex-shrink: 0; animation: pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.82); } }
+
+  /* LANDING */
+  .landing { max-width: 780px; margin: 0 auto; padding: 60px 28px 80px; }
+  .landing-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text3); margin-bottom: 22px; display: flex; align-items: center; gap: 12px; }
+  .landing-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--acc2); flex-shrink: 0; }
+
+  /* HERO ROW */
+  .landing-hero { display: flex; align-items: flex-start; gap: 40px; margin-bottom: 40px; }
+  .landing-text { flex: 1; min-width: 0; }
+  .landing-text h1 { font-family: 'Playfair Display', serif; font-size: clamp(52px, 10vw, 88px); font-weight: 900; color: var(--text); line-height: 0.9; margin-bottom: 20px; letter-spacing: -0.01em; }
+  .landing-text h1 em { font-style: italic; color: var(--acc); display: block; }
+  .landing-sub { color: var(--text3); font-size: 14px; font-weight: 300; line-height: 1.75; max-width: 420px; }
+  .landing-sub strong { color: var(--text2); font-weight: 500; }
+
+  /* PACK COLUMN */
+  .landing-prize { flex-shrink: 0; width: 168px; display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 28px; }
+  .prize-badge { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--acc); background: rgba(200,168,118,0.1); border: 1px solid rgba(200,168,118,0.28); padding: 5px 14px; border-radius: 999px; }
+  .prize-note { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text3); text-align: center; line-height: 1.5; }
+
+  /* THE PACK */
+  .pack {
+    width: 148px; height: 210px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    transform: rotate(-6deg);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.65), 0 0 40px rgba(255,120,0,0.22), inset 0 1px 0 rgba(255,255,255,0.22);
+    animation: pack-float 3.5s ease-in-out infinite;
+    cursor: pointer;
+    transition: transform 0.45s cubic-bezier(.2,.9,.25,1.15), box-shadow 0.45s;
+  }
+  .pack:hover {
+    animation-play-state: paused;
+    transform: rotate(-2deg) translateY(-14px) scale(1.06);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 60px rgba(255,140,0,0.38), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  @keyframes pack-float {
+    0%, 100% { transform: rotate(-6deg) translateY(0); }
+    50%       { transform: rotate(-6deg) translateY(-10px); }
+  }
+
+  /* Pack layers */
+  .pack-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(155deg, #6B0000 0%, #BB1A00 16%, #EE4400 36%, #FF7700 56%, #FFB800 76%, #FFD700 100%);
+  }
+  .pack-pattern {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(-55deg, transparent 0, transparent 8px, rgba(0,0,0,0.055) 8px, rgba(0,0,0,0.055) 10px);
+  }
+  .pack-tear {
+    position: absolute; top: 0; left: 0; right: 0; height: 22px;
+    background: rgba(0,0,0,0.38);
+    border-bottom: 1px dashed rgba(255,255,255,0.28);
+    z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pack-tear-dots { display: flex; gap: 5px; }
+  .pack-tear-dots span { width: 3px; height: 3px; border-radius: 999px; background: rgba(255,255,255,0.35); display: block; }
+  .pack-content {
+    position: absolute; inset: 22px 0 28px;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 8px 10px 6px;
+    z-index: 2;
+  }
+  .pack-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 900; letter-spacing: 0.03em;
+    color: #FFE100;
+    text-shadow: 1.5px 1.5px 0 #1a0800, -1px 1px 0 #1a0800, 1px -1px 0 #1a0800, -1px -1px 0 #1a0800, 0 3px 8px rgba(0,0,0,0.55);
+  }
+  .pack-tcg {
+    font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,228,100,0.8); text-shadow: 0 1px 3px rgba(0,0,0,0.8); margin-top: -2px;
+  }
+  .pack-art { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+  .pack-art svg { filter: drop-shadow(0 4px 14px rgba(0,0,0,0.55)); }
+  .pack-set {
+    font-family: 'DM Mono', monospace; font-size: 7.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,238,170,0.8); text-shadow: 0 1px 4px rgba(0,0,0,0.75);
+  }
+  .pack-footer {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 26px;
+    background: rgba(0,0,0,0.42);
+    border-top: 1px solid rgba(255,200,80,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(255,220,120,0.9); z-index: 2;
+  }
+  .pack-shine {
+    position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.38) 50%, rgba(255,255,255,0.1) 60%, transparent 75%);
+    animation: shine-sweep 3.5s ease-in-out infinite; animation-delay: 0.8s;
+    z-index: 5; pointer-events: none;
+  }
+  @keyframes shine-sweep {
+    0%, 25% { transform: translateX(-200%); }
+    60%, 100% { transform: translateX(300%); }
+  }
+
+  /* STATS */
+  .landing-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 52px; margin-top: 36px; }
+  .landing-stat { background: var(--surf); border: 1px solid rgba(255,255,255,0.055); border-radius: 12px; padding: 16px 20px; box-shadow: 0 2px 8px rgba(0,0,0,.42), 0 8px 24px rgba(0,0,0,.22); min-width: 112px; }
+  .landing-stat-value { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--acc); line-height: 1; margin-bottom: 5px; }
+  .landing-stat-label { font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); }
+
+  .group-select-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+  .group-select-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+  .group-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .group-btn { background: var(--surf); border: 1px solid rgba(255,255,255,0.055); border-radius: 14px; padding: 22px 22px 20px; cursor: pointer; text-align: left; transition: background 0.18s, border-color 0.18s, transform 0.18s, box-shadow 0.18s; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.42), 0 8px 24px rgba(0,0,0,.22); }
+  .group-btn::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; transform: scaleY(0); transition: transform 0.2s; transform-origin: bottom; border-radius: 14px 0 0 14px; }
+  .group-btn:hover { background: var(--surf2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.52), 0 14px 44px rgba(0,0,0,.28); }
+  .group-btn:hover::before { transform: scaleY(1); }
+  .group-shetty::before { background: #8B1A1A; } .group-shetty:hover { border-color: rgba(139,26,26,0.22); }
+  .group-ey::before { background: #1a4a8b; } .group-ey:hover { border-color: rgba(26,74,139,0.22); }
+  .group-banks::before { background: #1a6b3a; } .group-banks:hover { border-color: rgba(26,107,58,0.22); }
+  .group-frc::before { background: #5a3a8b; } .group-frc:hover { border-color: rgba(90,58,139,0.22); }
+  .group-num { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+  .group-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.15; margin-bottom: 4px; }
+  .group-role { font-size: 12px; color: var(--text3); font-weight: 300; }
+  .group-btn-arrow { position: absolute; bottom: 18px; right: 20px; font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text4); transition: color 0.18s, transform 0.18s; }
+  .group-btn:hover .group-btn-arrow { color: var(--acc); transform: translateX(3px); }
+
+  /* CARD PAGE */
+  .card-page { display: none; max-width: 800px; margin: 0 auto; padding: 32px 28px 80px; animation: fadeIn 0.3s ease; }
+  .card-page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .back-btn { display: inline-flex; align-items: center; gap: 7px; background: var(--surf); border: 1px solid rgba(255,255,255,0.07); border-radius: 999px; color: var(--text2); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 18px; cursor: pointer; margin-bottom: 20px; transition: background 0.16s, color 0.16s, border-color 0.16s; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  .back-btn:hover { background: var(--surf2); color: var(--text); border-color: rgba(200,168,118,0.22); }
+  .card { background: var(--paper); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.5), 0 20px 56px rgba(0,0,0,.32); border: 1px solid rgba(255,255,255,0.04); }
+  .card-accent { height: 5px; width: 100%; }
+  .card-inner { padding: 40px 44px 48px; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--bcard); }
+  .card-group-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 42px); font-weight: 900; color: var(--ink); line-height: 1.1; }
+  .card-title em { font-style: italic; display: block; font-size: 0.65em; font-weight: 400; color: var(--muted); margin-top: 4px; }
+  .verdict-stamp { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; padding: 8px 14px; border: 2px solid; white-space: nowrap; transform: rotate(3deg); flex-shrink: 0; margin-top: 4px; border-radius: 3px; }
+  .section { margin-bottom: 28px; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--bcard); }
+  .section-label::before { content: '//'; color: var(--acc); font-size: 11px; }
+  .context-box { background: var(--cream); border-left: 3px solid var(--acc); padding: 16px 20px; font-size: 13.5px; line-height: 1.75; color: #3a3028; border-radius: 0 5px 5px 0; }
+  .facts-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .facts-list li { display: flex; gap: 12px; font-size: 13px; line-height: 1.6; color: #3a3028; padding: 12px 16px; background: var(--cream); border: 1px solid var(--bcard); border-radius: 6px; }
+  .facts-list li::before { content: attr(data-num); font-family: 'DM Mono', monospace; font-size: 10px; color: var(--acc2); font-weight: 500; flex-shrink: 0; margin-top: 2px; }
+  .defense-box { background: var(--ink); padding: 20px 24px; color: var(--paper); border-radius: 8px; }
+  .defense-box p { font-size: 13px; line-height: 1.7; color: #c8bfb0; margin-bottom: 12px; }
+  .defense-box p:last-child { margin-bottom: 0; }
+  .defense-box strong { color: var(--acc); font-weight: 500; }
+  .prompts-grid { display: flex; flex-direction: column; }
+  .prompt-item { display: flex; gap: 14px; align-items: flex-start; padding: 13px 0; border-bottom: 1px dashed var(--bcard); }
+  .prompt-item:last-child { border-bottom: none; }
+  .prompt-num { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; color: var(--acc2); flex-shrink: 0; margin-top: 3px; }
+  .prompt-q { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.45; }
+  .prompt-hint { font-size: 11.5px; color: var(--muted); margin-top: 4px; font-weight: 300; line-height: 1.5; }
+  .notes-area { border: 1.5px dashed var(--bcard); background: white; padding: 16px; min-height: 100px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); width: 100%; resize: vertical; outline: none; transition: border-color 0.2s; display: block; border-radius: 6px; line-height: 1.6; }
+  .notes-area:focus { border-style: solid; }
+  .notes-area::placeholder { color: #bdb0a0; }
+  .presenter-row { display: flex; align-items: center; gap: 14px; background: var(--cream); border: 1px solid var(--bcard); border-radius: 8px; padding: 13px 18px; }
+  .presenter-label { font-size: 13px; color: #3a3028; flex: 1; line-height: 1.4; }
+  .presenter-input { border: 1px solid var(--bcard); border-radius: 6px; padding: 8px 14px; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; font-style: italic; color: var(--ink); background: white; outline: none; width: 200px; transition: border-color 0.2s; }
+  .presenter-input::placeholder { color: #c0b4a0; font-weight: 400; }
+  .verdict-section { background: var(--ink); padding: 24px 28px; margin-top: 28px; position: relative; border-radius: 8px; }
+  .verdict-section::before { content: 'CLOSING ARGUMENT'; position: absolute; top: -10px; left: 24px; background: var(--red); color: white; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; padding: 4px 10px; border-radius: 3px; }
+  .verdict-section p { font-size: 12px; color: #a09585; margin-bottom: 12px; line-height: 1.6; }
+  .verdict-area { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 14px; min-height: 80px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--paper); width: 100%; resize: vertical; outline: none; display: block; border-radius: 4px; }
+  .verdict-area::placeholder { color: #605850; }
+  .verdict-area:focus { border-color: rgba(200,168,118,0.4); }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; padding: 14px 44px; border-top: 1px solid var(--bcard); background: var(--cream); border-radius: 0 0 16px 16px; }
+  .footer-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+  .footer-rule { font-size: 11px; color: var(--red); font-weight: 500; }
+
+  /* THEMES */
+  .theme-shetty .card-accent { background: #8B1A1A; } .theme-shetty .verdict-stamp { color: #8B1A1A; border-color: #8B1A1A; } .theme-shetty .prompt-num { color: #8B1A1A; } .theme-shetty .section-label::before { color: #8B1A1A; } .theme-shetty .context-box { border-color: #8B1A1A; } .theme-shetty .notes-area:focus { border-color: #8B1A1A; } .theme-shetty .presenter-input:focus { border-color: #8B1A1A; }
+  .theme-ey .card-accent { background: #1a4a8b; } .theme-ey .verdict-stamp { color: #1a4a8b; border-color: #1a4a8b; } .theme-ey .prompt-num { color: #1a4a8b; } .theme-ey .section-label::before { color: #1a4a8b; } .theme-ey .context-box { border-color: #1a4a8b; } .theme-ey .notes-area:focus { border-color: #1a4a8b; } .theme-ey .presenter-input:focus { border-color: #1a4a8b; }
+  .theme-banks .card-accent { background: #1a6b3a; } .theme-banks .verdict-stamp { color: #1a6b3a; border-color: #1a6b3a; } .theme-banks .prompt-num { color: #1a6b3a; } .theme-banks .section-label::before { color: #1a6b3a; } .theme-banks .context-box { border-color: #1a6b3a; } .theme-banks .notes-area:focus { border-color: #1a6b3a; } .theme-banks .presenter-input:focus { border-color: #1a6b3a; }
+  .theme-frc .card-accent { background: #5a3a8b; } .theme-frc .verdict-stamp { color: #5a3a8b; border-color: #5a3a8b; } .theme-frc .prompt-num { color: #5a3a8b; } .theme-frc .section-label::before { color: #5a3a8b; } .theme-frc .context-box { border-color: #5a3a8b; } .theme-frc .notes-area:focus { border-color: #5a3a8b; } .theme-frc .presenter-input:focus { border-color: #5a3a8b; }
+
+  @media (max-width: 640px) {
+    .landing-hero { flex-direction: column; gap: 28px; }
+    .landing-prize { flex-direction: row; width: 100%; padding-top: 0; justify-content: center; gap: 20px; }
+    .pack { width: 110px; height: 156px; }
+    .group-grid { grid-template-columns: 1fr; }
+    .card-inner { padding: 28px 24px 36px; }
+    .card-footer { padding: 14px 24px; flex-direction: column; gap: 6px; text-align: center; }
+    .card-header { flex-direction: column; gap: 12px; }
+    .verdict-stamp { transform: none; }
+    .landing { padding: 40px 20px 60px; }
+    .presenter-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .presenter-input { width: 100%; }
+    .card-page { padding: 24px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-mark">N</div>
+    <span class="topbar-name">NMC Health</span>
+  </div>
+  <div class="topbar-pill"><span class="topbar-dot"></span>Workshop Activity</div>
+</header>
+
+<div class="landing" id="landing">
+  <div class="landing-eyebrow">Case Study · BAF3M Accounting</div>
+
+  <div class="landing-hero">
+    <!-- LEFT: text -->
+    <div class="landing-text">
+      <h1>Defend<br><em>Your Person</em></h1>
+      <p class="landing-sub">NMC Health collapsed with $6.6 billion in hidden debt. Four parties are in the hot seat. Your group must argue why your person is the <strong>least responsible.</strong></p>
+    </div>
+
+    <!-- RIGHT: Pokémon pack -->
+    <div class="landing-prize">
+      <div class="prize-badge">★ Prize</div>
+      <div class="pack">
+        <div class="pack-bg"></div>
+        <div class="pack-pattern"></div>
+        <div class="pack-tear">
+          <div class="pack-tear-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="pack-content">
+          <div class="pack-logo">Pokémon</div>
+          <div class="pack-tcg">Trading Card Game</div>
+          <div class="pack-art">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 130" width="90" height="90">
+              <!-- Left ear -->
+              <polygon points="22,76 8,8 44,58" fill="#F8CC10"/>
+              <polygon points="22,76 11,13 34,53" fill="#1c1c1c"/>
+              <!-- Right ear -->
+              <polygon points="98,76 112,8 76,58" fill="#F8CC10"/>
+              <polygon points="98,76 109,13 86,53" fill="#1c1c1c"/>
+              <!-- Head -->
+              <ellipse cx="60" cy="90" rx="50" ry="40" fill="#F8CC10"/>
+              <!-- Eyes -->
+              <ellipse cx="40" cy="82" rx="9" ry="10" fill="#1c1c1c"/>
+              <ellipse cx="80" cy="82" rx="9" ry="10" fill="#1c1c1c"/>
+              <circle cx="43" cy="78" r="3.5" fill="white"/>
+              <circle cx="83" cy="78" r="3.5" fill="white"/>
+              <!-- Nose -->
+              <ellipse cx="60" cy="93" rx="3" ry="2" fill="#8B6210"/>
+              <!-- Mouth -->
+              <path d="M 47,101 Q 60,115 73,101" fill="none" stroke="#8B6210" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Cheeks -->
+              <ellipse cx="22" cy="101" rx="14" ry="11" fill="#E03030" opacity="0.88"/>
+              <ellipse cx="98" cy="101" rx="14" ry="11" fill="#E03030" opacity="0.88"/>
+            </svg>
+          </div>
+          <div class="pack-set">Scarlet &amp; Violet</div>
+        </div>
+        <div class="pack-footer">Booster Pack · 10 Cards</div>
+        <div class="pack-shine"></div>
+      </div>
+      <div class="prize-note">Best defense<br>wins the pack</div>
+    </div>
+  </div>
+
+  <div class="landing-stats">
+    <div class="landing-stat"><div class="landing-stat-value">$6.6B</div><div class="landing-stat-label">Hidden Debt</div></div>
+    <div class="landing-stat"><div class="landing-stat-value">4</div><div class="landing-stat-label">Parties</div></div>
+    <div class="landing-stat"><div class="landing-stat-value">80+</div><div class="landing-stat-label">Global Lenders</div></div>
+    <div class="landing-stat"><div class="landing-stat-value">£105M</div><div class="landing-stat-label">EY Settlement</div></div>
+  </div>
+
+  <div class="group-select-label">Select your group</div>
+  <div class="group-grid">
+    <button class="group-btn group-shetty" onclick="showCard('shetty')"><div class="group-num">Group 01</div><div class="group-name">B.R. Shetty</div><div class="group-role">Founder & Former Chairman</div><span class="group-btn-arrow">→</span></button>
+    <button class="group-btn group-ey" onclick="showCard('ey')"><div class="group-num">Group 02</div><div class="group-name">Ernst & Young</div><div class="group-role">External Auditor</div><span class="group-btn-arrow">→</span></button>
+    <button class="group-btn group-banks" onclick="showCard('banks')"><div class="group-num">Group 03</div><div class="group-name">The Banks</div><div class="group-role">80+ Global Lenders</div><span class="group-btn-arrow">→</span></button>
+    <button class="group-btn group-frc" onclick="showCard('frc')"><div class="group-num">Group 04</div><div class="group-name">The FRC</div><div class="group-role">UK Audit Regulator</div><span class="group-btn-arrow">→</span></button>
+  </div>
+</div>
+
+<!-- GROUP 01: B.R. SHETTY -->
+<div class="card-page theme-shetty" id="card-shetty">
+  <button class="back-btn" onclick="goBack()">← Back to Groups</button>
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-inner">
+      <div class="card-header">
+        <div><div class="card-group-tag">Group 01 — Defend Your Person</div><div class="card-title">B.R. Shetty<em>Founder & Former Co-Chairman, NMC Health</em></div></div>
+        <div class="verdict-stamp">Least Responsible?</div>
+      </div>
+      <div class="section"><div class="section-label">Who Is He</div><div class="context-box">B.R. Shetty founded NMC Health in 1974 as a small clinic in Abu Dhabi. He built it into the largest private healthcare network in the UAE, eventually listing on the London Stock Exchange and reaching the FTSE 100 with an $11 billion valuation. At his peak, Forbes estimated his personal net worth at $4.2 billion. When the fraud was exposed in 2020, Shetty stepped down and denied all knowledge of the hidden debt — claiming he was deceived by the very executives he trusted to run the company.</div></div>
+      <div class="section"><div class="section-label">Key Facts for Your Defense</div><ul class="facts-list">
+        <li data-num="01">Shetty claims his signature was electronically forged on loan documents and bank transfers — a claim he presented as evidence in the ongoing $5.6 billion criminal trial.</li>
+        <li data-num="02">The presiding judge rejected the forged signature claim, but Shetty maintains that a small group of former executives orchestrated the fraud behind his back.</li>
+        <li data-num="03">Shell companies were allegedly set up in his name without his knowledge or authorization, according to an internal investigation he himself commissioned.</li>
+        <li data-num="04">He was not the only executive managing day-to-day financial operations — CEO Prasanth Manghat and others had direct operational control over the books.</li>
+        <li data-num="05">He voluntarily stepped down, cooperated with authorities, and filed his own lawsuits against former executives he claims defrauded him.</li>
+        <li data-num="06">EY, the professional external auditor, signed off on the financial statements for years — if the founder trusted the same auditors the banks trusted, can he be blamed for believing his own company's books?</li>
+      </ul></div>
+      <div class="section"><div class="section-label">The Argument Against You</div><div class="defense-box"><p><strong>The prosecution will argue:</strong> As founder and chairman, Shetty had ultimate responsibility for the company. The fraud benefited him directly — billions were redirected into high-end real estate, private jets, and luxury vehicles. It is nearly impossible for a hands-on founder to be unaware of a $6.6 billion discrepancy in his own company over many years.</p><p><strong>You need to counter this.</strong> Think about: what does it mean to delegate authority? Is a CEO always personally guilty of what their employees do?</p></div></div>
+      <div class="section"><div class="section-label">Guiding Questions</div>
+        <div class="prompts-grid">
+          <div class="prompt-item"><div class="prompt-num">01</div><div><div class="prompt-q">If Shetty truly didn't know, who should have told him — and why didn't they?</div><div class="prompt-hint">Think about the role of auditors, the board, and internal controls.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">02</div><div><div class="prompt-q">Is it possible to run a $11 billion company and genuinely not know $6.6 billion is missing?</div><div class="prompt-hint">Consider how large corporations are structured and how information flows up.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">03</div><div><div class="prompt-q">What is the single strongest reason Shetty bears less responsibility than the other three parties?</div><div class="prompt-hint">Build toward your closing argument — what's the core of your case?</div></div></div>
+        </div>
+      </div>
+      <div class="section"><div class="section-label">Notes</div><textarea class="notes-area" data-save="shetty-notes" placeholder="Take notes as you discuss..."></textarea></div>
+      <div class="section"><div class="section-label">Presenter</div><div class="presenter-row"><div class="presenter-label">Nominate one person to present your group's case to the class.</div><input class="presenter-input" data-save="shetty-presenter" type="text" placeholder="Name..."></div></div>
+      <div class="verdict-section">
+        <p>Your presenter has one minute max to convince the class that B.R. Shetty is the least responsible party in the NMC collapse. Prep your argument here before going up — lead with your strongest point, back it with evidence from your brief, and make clear why the other three parties carry more blame.</p>
+        <textarea class="verdict-area" data-save="shetty-verdict" placeholder="Draft your argument here..."></textarea>
+      </div>
+    </div>
+    <div class="card-footer"><div class="footer-time">⏱ 5 min prep · 1 min presentation</div><div class="footer-rule">Argue least responsible — not innocent</div></div>
+  </div>
+</div>
+
+<!-- GROUP 02: ERNST & YOUNG -->
+<div class="card-page theme-ey" id="card-ey">
+  <button class="back-btn" onclick="goBack()">← Back to Groups</button>
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-inner">
+      <div class="card-header">
+        <div><div class="card-group-tag">Group 02 — Defend Your Person</div><div class="card-title">Ernst & Young<em>External Auditor — Big Four Accounting Firm</em></div></div>
+        <div class="verdict-stamp">Least Responsible?</div>
+      </div>
+      <div class="section"><div class="section-label">Who Are They</div><div class="context-box">Ernst & Young (EY) is one of the Big Four global accounting firms, responsible for independently auditing NMC Health's financial statements and certifying they were accurate. An external auditor's job is to verify a company's books are truthful — acting as a check on management. EY signed off on NMC's accounts for years, issuing a "Going Concern" approval that told the world NMC was financially stable. They later settled a £105.5 million negligence lawsuit without admitting any wrongdoing.</div></div>
+      <div class="section"><div class="section-label">Key Facts for Your Defense</div><ul class="facts-list">
+        <li data-num="01">NMC staff refused to allow EY auditors to download financial data directly — they were only permitted to view records on screens controlled by NMC personnel, making independent verification nearly impossible.</li>
+        <li data-num="02">When EY auditors attempted to contact suppliers directly to verify invoice details, NMC personnel intercepted and provided forged documentation that passed inspection.</li>
+        <li data-num="03">EY auditors who pushed back with difficult questions were threatened with termination of the firm's contract — creating intense pressure to back down.</li>
+        <li data-num="04">Auditors can only audit what they are given access to. If a client actively deceives, blocks, and forges documents, the auditor's ability to detect fraud is fundamentally compromised.</li>
+        <li data-num="05">NMC deliberately leveraged EY's prestigious reputation with banks — banks trusted EY's clean sign-off, not NMC's word. EY was weaponized without their knowledge.</li>
+        <li data-num="06">EY settled the lawsuit without admitting liability — meaning legally, no court has ruled they were definitively negligent.</li>
+      </ul></div>
+      <div class="section"><div class="section-label">The Argument Against You</div><div class="defense-box"><p><strong>The prosecution will argue:</strong> EY was paid to catch exactly this kind of fraud. Red flags existed in public financial statements — Muddy Waters Research found them without any insider access at all. If a short-seller could spot the inconsistencies, a professional audit firm had no excuse. EY also had financial motivation to keep the contract, which compromised their independence.</p><p><strong>You need to counter this.</strong> Think about: what is an auditor actually responsible for versus what is management's responsibility?</p></div></div>
+      <div class="section"><div class="section-label">Guiding Questions</div>
+        <div class="prompts-grid">
+          <div class="prompt-item"><div class="prompt-num">01</div><div><div class="prompt-q">If EY was blocked from accessing real data, whose fault is it that the fraud wasn't caught?</div><div class="prompt-hint">Consider what auditors are legally empowered to demand from a client.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">02</div><div><div class="prompt-q">Should EY have walked away from the contract when they were threatened? What would have happened if they did?</div><div class="prompt-hint">Think about what refusing to sign off would signal to the market.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">03</div><div><div class="prompt-q">What is the single strongest reason EY bears less responsibility than the other three parties?</div><div class="prompt-hint">Build toward your closing argument — what's the core of your case?</div></div></div>
+        </div>
+      </div>
+      <div class="section"><div class="section-label">Notes</div><textarea class="notes-area" data-save="ey-notes" placeholder="Take notes as you discuss..."></textarea></div>
+      <div class="section"><div class="section-label">Presenter</div><div class="presenter-row"><div class="presenter-label">Nominate one person to present your group's case to the class.</div><input class="presenter-input" data-save="ey-presenter" type="text" placeholder="Name..."></div></div>
+      <div class="verdict-section">
+        <p>Your presenter has one minute max to convince the class that Ernst & Young is the least responsible party in the NMC collapse. Prep your argument here before going up — lead with your strongest point, back it with evidence from your brief, and make clear why the other three parties carry more blame.</p>
+        <textarea class="verdict-area" data-save="ey-verdict" placeholder="Draft your argument here..."></textarea>
+      </div>
+    </div>
+    <div class="card-footer"><div class="footer-time">⏱ 5 min prep · 1 min presentation</div><div class="footer-rule">Argue least responsible — not innocent</div></div>
+  </div>
+</div>
+
+<!-- GROUP 03: THE BANKS -->
+<div class="card-page theme-banks" id="card-banks">
+  <button class="back-btn" onclick="goBack()">← Back to Groups</button>
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-inner">
+      <div class="card-header">
+        <div><div class="card-group-tag">Group 03 — Defend Your Person</div><div class="card-title">The Banks<em>80+ Global Lenders — Including ADCB, HSBC, Barclays</em></div></div>
+        <div class="verdict-stamp">Least Responsible?</div>
+      </div>
+      <div class="section"><div class="section-label">Who Are They</div><div class="context-box">Over 80 banks globally lent money to NMC Health over many years, including Abu Dhabi Commercial Bank (owed ~$1 billion), Dubai Islamic Bank ($541M), Standard Chartered ($250M), and Barclays ($146M). Banks lend based on a company's financial health — they review audited statements, credit ratings, and market standing. NMC was a FTSE 100 company with a clean EY audit, making it appear to be one of the safest borrowers in the region. The banks ended up as some of the biggest financial victims of the fraud.</div></div>
+      <div class="section"><div class="section-label">Key Facts for Your Defense</div><ul class="facts-list">
+        <li data-num="01">Every bank relied on EY's audited financial statements — the same documents that a Big Four firm had professionally certified as accurate. Banks are not accounting firms; they depend on auditors to do that job.</li>
+        <li data-num="02">NMC was listed on the London Stock Exchange and part of the FTSE 100 — one of the most scrutinized and prestigious indices in the world. Being FTSE 100 signals credibility, regulatory oversight, and transparency.</li>
+        <li data-num="03">The banks were themselves victims — they lost billions. Abu Dhabi Commercial Bank alone was exposed to nearly $1 billion in debt they may never fully recover.</li>
+        <li data-num="04">The fraud used "reverse factoring" — a legitimate financial tool — to disguise debt as normal supplier payment arrangements. This made the borrowing look like routine trade financing, not alarm-worthy debt.</li>
+        <li data-num="05">Multiple regulators including the FRC were also watching NMC and found nothing — if trained regulators missed it, banks had even less reason to suspect fraud.</li>
+        <li data-num="06">Banks tightened their due diligence requirements after the scandal, showing they responded and adapted — evidence they were not reckless but simply deceived.</li>
+      </ul></div>
+      <div class="section"><div class="section-label">The Argument Against You</div><div class="defense-box"><p><strong>The prosecution will argue:</strong> Banks have entire risk management departments whose job is to spot exactly this kind of overleveraging. With 80+ banks all lending simultaneously, no single bank had a full picture of NMC's total debt — a fragmented oversight that sophisticated lenders should have coordinated to prevent. Greed for interest income may have made them overlook warning signs.</p><p><strong>You need to counter this.</strong> Think about: is a lender responsible for fraud committed by the borrower using legitimate financial instruments?</p></div></div>
+      <div class="section"><div class="section-label">Guiding Questions</div>
+        <div class="prompts-grid">
+          <div class="prompt-item"><div class="prompt-num">01</div><div><div class="prompt-q">Should banks have independently verified NMC's finances rather than trusting EY's audit? Is that realistic?</div><div class="prompt-hint">Think about how many companies banks lend to and what verification would require.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">02</div><div><div class="prompt-q">The banks lost billions — does being a victim make you less responsible, or can you be both?</div><div class="prompt-hint">Consider whether negligence and victimhood can coexist.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">03</div><div><div class="prompt-q">What is the single strongest reason the banks bear less responsibility than the other three parties?</div><div class="prompt-hint">Build toward your closing argument — what's the core of your case?</div></div></div>
+        </div>
+      </div>
+      <div class="section"><div class="section-label">Notes</div><textarea class="notes-area" data-save="banks-notes" placeholder="Take notes as you discuss..."></textarea></div>
+      <div class="section"><div class="section-label">Presenter</div><div class="presenter-row"><div class="presenter-label">Nominate one person to present your group's case to the class.</div><input class="presenter-input" data-save="banks-presenter" type="text" placeholder="Name..."></div></div>
+      <div class="verdict-section">
+        <p>Your presenter has one minute max to convince the class that the banks are the least responsible party in the NMC collapse. Prep your argument here before going up — lead with your strongest point, back it with evidence from your brief, and make clear why the other three parties carry more blame.</p>
+        <textarea class="verdict-area" data-save="banks-verdict" placeholder="Draft your argument here..."></textarea>
+      </div>
+    </div>
+    <div class="card-footer"><div class="footer-time">⏱ 5 min prep · 1 min presentation</div><div class="footer-rule">Argue least responsible — not innocent</div></div>
+  </div>
+</div>
+
+<!-- GROUP 04: THE FRC -->
+<div class="card-page theme-frc" id="card-frc">
+  <button class="back-btn" onclick="goBack()">← Back to Groups</button>
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-inner">
+      <div class="card-header">
+        <div><div class="card-group-tag">Group 04 — Defend Your Person</div><div class="card-title">The FRC<em>Financial Reporting Council — UK Audit Regulator</em></div></div>
+        <div class="verdict-stamp">Least Responsible?</div>
+      </div>
+      <div class="section"><div class="section-label">Who Are They</div><div class="context-box">The Financial Reporting Council (FRC) is the UK body responsible for setting accounting and auditing standards, and for overseeing the quality of audits carried out by firms like EY. When EY audited NMC Health, those audits had to comply with standards the FRC sets and enforces. The FRC has the power to investigate audit failures and sanction firms. Despite NMC being listed since 2012, the FRC took no action until the fraud was already public — opening a formal investigation into EY's NMC audit only after the collapse in 2020.</div></div>
+      <div class="section"><div class="section-label">Key Facts for Your Defense</div><ul class="facts-list">
+        <li data-num="01">The FRC oversees audit quality retrospectively — it investigates reported failures and complaints. It is not structured to monitor live audit engagements or flag problems in real time.</li>
+        <li data-num="02">The FRC relies on audit firms to self-report concerns and cooperate with oversight. EY provided no warnings and raised no red flags with the regulator at any point during the NMC engagement.</li>
+        <li data-num="03">NMC's actual financial operations, banking relationships, and transactions were almost entirely in the UAE — outside the reach of UK audit standards and FRC jurisdiction.</li>
+        <li data-num="04">The FRC did respond once the fraud was exposed — opening a formal investigation into EY's conduct of the NMC audit, which contributed directly to the £105.5M settlement.</li>
+        <li data-num="05">Setting accounting standards is fundamentally different from enforcing them at every individual company. The FRC cannot be expected to independently verify every listed firm's audit compliance.</li>
+        <li data-num="06">The FRC has since strengthened its audit oversight regime and pushed for major audit reform as a direct result of high-profile failures including NMC — showing institutional accountability.</li>
+      </ul></div>
+      <div class="section"><div class="section-label">The Argument Against You</div><div class="defense-box"><p><strong>The prosecution will argue:</strong> The FRC's entire purpose is to ensure audit quality — and EY's clean sign-off on NMC's accounts was the single most important factor that enabled the fraud to continue. If audits are the system's safeguard, the body responsible for audit standards must share accountability when those audits catastrophically fail. Muddy Waters found the red flags in public documents. A regulator with the mandate and tools to review EY's audit quality had every reason to look closer, and didn't.</p><p><strong>You need to counter this.</strong> Think about: is a standards-setter responsible when a regulated firm breaks those standards in secret?</p></div></div>
+      <div class="section"><div class="section-label">Guiding Questions</div>
+        <div class="prompts-grid">
+          <div class="prompt-item"><div class="prompt-num">01</div><div><div class="prompt-q">Is the FRC responsible for the fraud if EY followed the standards the FRC set — but those standards weren't strong enough to catch it?</div><div class="prompt-hint">Think about whether the problem was the rules, or the auditor who broke them.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">02</div><div><div class="prompt-q">Should the FRC have proactively reviewed EY's audit quality on NMC before the collapse? Is that a realistic expectation?</div><div class="prompt-hint">Consider how many firms the FRC oversees and what proactive review would require.</div></div></div>
+          <div class="prompt-item"><div class="prompt-num">03</div><div><div class="prompt-q">What is the single strongest reason the FRC bears less responsibility than the other three parties?</div><div class="prompt-hint">Build toward your closing argument — what's the core of your case?</div></div></div>
+        </div>
+      </div>
+      <div class="section"><div class="section-label">Notes</div><textarea class="notes-area" data-save="frc-notes" placeholder="Take notes as you discuss..."></textarea></div>
+      <div class="section"><div class="section-label">Presenter</div><div class="presenter-row"><div class="presenter-label">Nominate one person to present your group's case to the class.</div><input class="presenter-input" data-save="frc-presenter" type="text" placeholder="Name..."></div></div>
+      <div class="verdict-section">
+        <p>Your presenter has one minute max to convince the class that the FRC is the least responsible party in the NMC collapse. Prep your argument here before going up — lead with your strongest point, back it with evidence from your brief, and make clear why the other three parties carry more blame.</p>
+        <textarea class="verdict-area" data-save="frc-verdict" placeholder="Draft your argument here..."></textarea>
+      </div>
+    </div>
+    <div class="card-footer"><div class="footer-time">⏱ 5 min prep · 1 min presentation</div><div class="footer-rule">Argue least responsible — not innocent</div></div>
+  </div>
+</div>
+
+<script>
+  function showCard(group) {
+    document.getElementById('landing').style.display = 'none';
+    document.querySelectorAll('.card-page').forEach(el => el.classList.remove('active'));
+    document.getElementById('card-' + group).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function goBack() {
+    document.getElementById('landing').style.display = 'block';
+    document.querySelectorAll('.card-page').forEach(el => el.classList.remove('active'));
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-save]').forEach(el => {
+    const key = 'nmc-' + el.dataset.save;
+    const saved = localStorage.getItem(key);
+    if (saved !== null) el.value = saved;
+    el.addEventListener('input', () => localStorage.setItem(key, el.value));
+  });
+</script>
+</body>
+</html>
